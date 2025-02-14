@@ -1,12 +1,12 @@
 <?php
 /*
-Plugin Name: Example Update Plugin
+Plugin Name: Example Plugin
 Plugin URI: https://github.com/mehul0810/example-update-plugin
 Description: An example plugin to test UpdateSync automatic update functionality.
 Version: 1.0.0
 Author: Mehul Gohil
 Author URI: https://mehulgohil.com
-Update URI: https://github.com/mehul0810/example-update-plugin
+Update URI: https://github.com/mehul0810/example-plugin
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
