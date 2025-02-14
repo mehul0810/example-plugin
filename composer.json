@@ -1,0 +1,21 @@
+{
+    "name": "mehul0810/example-update-plugin",
+    "description": "An example plugin to test UpdateSync automatic updates",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=8.1",
+        "mehul0810/updatesync": "dev-main"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mehul0810/updatesync"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ExampleUpdatePlugin\\": "src/"
+        }
+    }
+}
