@@ -1,41 +1,37 @@
-name: Build Release
+name: Build Plugin Release
 
 on:
   release:
-    types: [published]
+    types: [released]
+
+permissions:
+  contents: write  # This is required to upload release assets
 
 jobs:
-  build-release:
+  build:
+    name: Build Plugin Artifact
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Install composer dependencies
+        uses: php-actions/composer@v2
         with:
-          php-version: '8.1'
-          tools: composer
+          dev: no
 
-      - name: Install Composer Dependencies
-        run: composer install --no-dev --prefer-dist
-
-      - name: Dump Optimized Autoload
-        run: composer dump-autoload --optimize
-
-      - name: Create ZIP Archive
+      - name: Generate plugin artifact
         run: |
-          ZIP_NAME="${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip"
-          echo "Creating ZIP archive: $ZIP_NAME"
-          zip -r "$ZIP_NAME" . -x "*.git*" "tests/*" "vendor/*/tests/*" "vendor/*/docs/*"
+          rsync -rc --exclude-from="$GITHUB_WORKSPACE/.distignore" "$GITHUB_WORKSPACE/" release/ --delete --delete-excluded
+          cd "${GITHUB_WORKSPACE}/release" || exit
+          zip -r "${GITHUB_WORKSPACE}/example-plugin.zip" .
 
-      - name: Upload Release Asset
+      - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
-          asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
+          asset_path: ${{ github.workspace }}/example-plugin.zip
+          asset_name: example-plugin.zip
           asset_content_type: application/zip
